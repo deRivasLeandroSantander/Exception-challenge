@@ -9,11 +9,7 @@ import com.santander.challenge.utils.FileCreator;
 import com.santander.challenge.utils.LegacyMessageSender;
 import com.santander.challenge.utils.MailSender;
 import com.santander.challenge.utils.SlackMessageSender;
-import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 @Service
 public class UserService {
@@ -26,7 +22,7 @@ public class UserService {
 
     public ResponseDTO createUser(UserDTO userDTO) {
         User user = new User(userDTO.getName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getPassword());
-        String message = "User {user} created successfully";
+        String message = "User " + user.getEmail() + " created successfully";
         try {
             if(checkUserExistence(user.getEmail()) ) {
                 MailSender.sendMailOfExistence("no-response@exceptionexample.com");
@@ -40,7 +36,7 @@ public class UserService {
                 else {
                     SlackMessageSender.sendSlackToSupportChannel(user);
                     LegacyMessageSender.sendMessageToLegacySystem(user);
-                    return new ResponseDTO("User created successfully");
+                    return new ResponseDTO("User " + user.getEmail() + " created successfully");
                 }
             }
         } finally {
