@@ -4,6 +4,7 @@ import com.santander.challenge.dtos.response.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -68,5 +69,10 @@ public class ErrorExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ResponseDTO> handleRuntimeException(RuntimeException e) {
         return new ResponseEntity<ResponseDTO>(new ResponseDTO("Unespected error"), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<ResponseDTO> handleValidationException(MethodArgumentNotValidException e) {
+        return new ResponseEntity<>(new ResponseDTO(e.getBindingResult().getFieldError().getDefaultMessage()), HttpStatus.BAD_REQUEST);
     }
 }
